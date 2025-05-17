@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chat Login</title>
+</head>
+<body>
+  <h2>Login mit Google</h2>
+  <button id="login">Login mit Google</button>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.7.3/firebase-app.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.7.3/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBTOOApJSKjySYOe8EmBv8kzISl8D2a7PU",
+      authDomain: "chareca-d60a8.firebaseapp.com",
+      databaseURL: "https://chareca-d60a8-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "chareca-d60a8",
+      storageBucket: "chareca-d60a8.appspot.com",
+      messagingSenderId: "971418900633",
+      appId: "1:971418900633:web:a72f9e433f1dd25bc9c008",
+      measurementId: "G-5KNWZKN7FR"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth();
+    const provider = new GoogleAuthProvider();
+
+    document.getElementById("login").addEventListener("click", () => {
+      signInWithPopup(auth, provider)
+        .then(result => {
+          location.href = "chat.html";
+        })
+        .catch(console.error);
+    });
+  </script>
+</body>
+</html>
