@@ -1,0 +1,58 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Kontakte</title>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.7.3/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.7.3/firebase-auth.js";
+    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/11.7.3/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBTOOApJSKjySYOe8EmBv8kzISl8D2a7PU",
+      authDomain: "chareca-d60a8.firebaseapp.com",
+      databaseURL: "https://chareca-d60a8-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "chareca-d60a8",
+      storageBucket: "chareca-d60a8.appspot.com",
+      messagingSenderId: "971418900633",
+      appId: "1:971418900633:web:a72f9e433f1dd25bc9c008",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth();
+    const db = getDatabase(app);
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        set(ref(db, 'users/' + user.uid), {
+          name: user.displayName,
+          uid: user.uid
+        });
+
+        const usersRef = ref(db, 'users');
+        onValue(usersRef, (snapshot) => {
+          const users = snapshot.val();
+          const list = document.getElementById("contacts");
+          list.innerHTML = "";
+          for (let uid in users) {
+            if (uid !== user.uid) {
+              const li = document.createElement("li");
+              li.textContent = users[uid].name;
+              li.onclick = () => {
+                window.location.href = "chat.html?with=" + uid + "&name=" + encodeURIComponent(users[uid].name);
+              };
+              list.appendChild(li);
+            }
+          }
+        });
+      } else {
+        window.location.href = "index.html";
+      }
+    });
+  </script>
+</head>
+<body>
+  <h2>Kontakte</h2>
+  <ul id="contacts"></ul>
+</body>
+</html>
