@@ -2,45 +2,51 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>1:1 Image Resizer</title>
+  <title>Discord-like PFP Cropper</title>
   <link rel="stylesheet" href="https://unpkg.com/cropperjs/dist/cropper.min.css" />
   <style>
     body {
-      font-family: sans-serif;
-      background: #1e1e2f;
+      background: #1e1f2f;
       color: white;
-      text-align: center;
+      font-family: sans-serif;
       padding: 40px;
+      text-align: center;
     }
 
     input[type="file"] {
       margin-bottom: 20px;
     }
 
+    .cropper-container {
+      display: inline-block;
+      max-width: 400px;
+      max-height: 400px;
+    }
+
     #image {
       max-width: 100%;
-      margin-top: 20px;
+      max-height: 400px;
       display: none;
     }
 
-    #preview {
+    .preview {
       margin-top: 30px;
     }
 
     canvas {
-      margin-top: 10px;
-      border: 2px solid #888;
+      border-radius: 50%;
+      border: 3px solid #444;
     }
 
     button {
+      margin-top: 20px;
       padding: 10px 20px;
-      margin-top: 15px;
-      font-size: 16px;
-      border: none;
       background-color: #5865f2;
       color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
       cursor: pointer;
-      border-radius: 5px;
     }
 
     button:hover {
@@ -49,14 +55,18 @@
   </style>
 </head>
 <body>
-  <h1>1:1 Image Resizer</h1>
+  <h1>Upload & Crop Like Discord</h1>
   <input type="file" accept="image/*" id="fileInput">
-  <div>
+
+  <div class="cropper-container">
     <img id="image">
   </div>
-  <button id="cropBtn">Crop & Download</button>
 
-  <div id="preview">
+  <div>
+    <button id="cropButton">Crop & Download</button>
+  </div>
+
+  <div class="preview">
     <h3>Preview:</h3>
     <canvas id="resultCanvas" width="256" height="256"></canvas>
   </div>
@@ -65,12 +75,13 @@
   <script>
     const fileInput = document.getElementById('fileInput');
     const image = document.getElementById('image');
-    const cropBtn = document.getElementById('cropBtn');
+    const cropButton = document.getElementById('cropButton');
     const resultCanvas = document.getElementById('resultCanvas');
     const ctx = resultCanvas.getContext('2d');
+
     let cropper;
 
-    fileInput.addEventListener('change', (e) => {
+    fileInput.addEventListener('change', e => {
       const file = e.target.files[0];
       if (!file) return;
 
@@ -85,26 +96,32 @@
           aspectRatio: 1,
           viewMode: 1,
           background: false,
-          zoomable: true,
+          zoomOnWheel: true,
+          movable: true,
+          dragMode: 'move',
+          autoCropArea: 1,
+          responsive: true,
+          cropBoxResizable: false,
+          cropBoxMovable: false,
         });
       };
       reader.readAsDataURL(file);
     });
 
-    cropBtn.addEventListener('click', () => {
+    cropButton.addEventListener('click', () => {
       if (!cropper) return;
 
       const croppedCanvas = cropper.getCroppedCanvas({
         width: 256,
         height: 256,
+        imageSmoothingQuality: 'high'
       });
 
       ctx.clearRect(0, 0, resultCanvas.width, resultCanvas.height);
       ctx.drawImage(croppedCanvas, 0, 0, resultCanvas.width, resultCanvas.height);
 
-      // Download
       const link = document.createElement('a');
-      link.download = 'resized-image.png';
+      link.download = 'profile.png';
       link.href = resultCanvas.toDataURL('image/png');
       link.click();
     });
