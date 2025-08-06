@@ -1,37 +1,113 @@
-
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Login</title>
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.7.3/firebase-app.js";
-    import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.7.3/firebase-auth.js";
+  <meta charset="UTF-8">
+  <title>1:1 Image Resizer</title>
+  <link rel="stylesheet" href="https://unpkg.com/cropperjs/dist/cropper.min.css" />
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #1e1e2f;
+      color: white;
+      text-align: center;
+      padding: 40px;
+    }
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyBTOOApJSKjySYOe8EmBv8kzISl8D2a7PU",
-      authDomain: "chareca-d60a8.firebaseapp.com",
-      databaseURL: "https://chareca-d60a8-default-rtdb.europe-west1.firebasedatabase.app",
-      projectId: "chareca-d60a8",
-      storageBucket: "chareca-d60a8.appspot.com",
-      messagingSenderId: "971418900633",
-      appId: "1:971418900633:web:a72f9e433f1dd25bc9c008",
-    };
+    input[type="file"] {
+      margin-bottom: 20px;
+    }
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth();
-    const provider = new GoogleAuthProvider();
+    #image {
+      max-width: 100%;
+      margin-top: 20px;
+      display: none;
+    }
 
-    document.getElementById("login").addEventListener("click", () => {
-      signInWithPopup(auth, provider).then((result) => {
-        window.location.href = "contacts.html";
-      }).catch((error) => {
-        console.error("Login error", error);
-      });
-    });
-  </script>
+    #preview {
+      margin-top: 30px;
+    }
+
+    canvas {
+      margin-top: 10px;
+      border: 2px solid #888;
+    }
+
+    button {
+      padding: 10px 20px;
+      margin-top: 15px;
+      font-size: 16px;
+      border: none;
+      background-color: #5865f2;
+      color: white;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    button:hover {
+      background-color: #4752c4;
+    }
+  </style>
 </head>
 <body>
-  <h2>Login</h2>
-  <button id="login">Mit Google anmelden</button>
+  <h1>1:1 Image Resizer</h1>
+  <input type="file" accept="image/*" id="fileInput">
+  <div>
+    <img id="image">
+  </div>
+  <button id="cropBtn">Crop & Download</button>
+
+  <div id="preview">
+    <h3>Preview:</h3>
+    <canvas id="resultCanvas" width="256" height="256"></canvas>
+  </div>
+
+  <script src="https://unpkg.com/cropperjs"></script>
+  <script>
+    const fileInput = document.getElementById('fileInput');
+    const image = document.getElementById('image');
+    const cropBtn = document.getElementById('cropBtn');
+    const resultCanvas = document.getElementById('resultCanvas');
+    const ctx = resultCanvas.getContext('2d');
+    let cropper;
+
+    fileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        image.src = reader.result;
+        image.style.display = 'block';
+
+        if (cropper) cropper.destroy();
+
+        cropper = new Cropper(image, {
+          aspectRatio: 1,
+          viewMode: 1,
+          background: false,
+          zoomable: true,
+        });
+      };
+      reader.readAsDataURL(file);
+    });
+
+    cropBtn.addEventListener('click', () => {
+      if (!cropper) return;
+
+      const croppedCanvas = cropper.getCroppedCanvas({
+        width: 256,
+        height: 256,
+      });
+
+      ctx.clearRect(0, 0, resultCanvas.width, resultCanvas.height);
+      ctx.drawImage(croppedCanvas, 0, 0, resultCanvas.width, resultCanvas.height);
+
+      // Download
+      const link = document.createElement('a');
+      link.download = 'resized-image.png';
+      link.href = resultCanvas.toDataURL('image/png');
+      link.click();
+    });
+  </script>
 </body>
 </html>
