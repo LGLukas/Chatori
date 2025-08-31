@@ -3,14 +3,28 @@
 <head>
   <title>Homework Tracker</title>
   <style>
-    body { font-family: Arial, sans-serif; text-align: center; margin: 20px; }
-    iframe { width: 95%; height: 600px; border: 1px solid #ccc; border-radius: 8px; }
+    body { 
+      font-family: Arial, sans-serif; 
+      text-align: center; 
+      margin: 20px; 
+      background: #f5f5f5;
+    }
+    h1 { color: #333; }
+    iframe { 
+      width: 95%; 
+      height: 80vh; 
+      border: 1px solid #ccc; 
+      border-radius: 8px; 
+      background: white;
+    }
+    p { color: #555; }
   </style>
 </head>
 <body>
   <h1>📘 Class Homework Tracker</h1>
-  <p>Our shared homework list:</p>
+  <p>Here’s our shared homework list. Everyone can see it!</p>
 
+  <!-- Replace YOUR_SHEET_ID with your actual Google Sheet ID -->
   <iframe src="https://docs.google.com/spreadsheets/d/12ViolKfxUijX4wbyxIJsH5pUok8Y710HB5PuRUmYmgc/pubhtml?widget=true&headers=false"></iframe>
 </body>
 </html>
